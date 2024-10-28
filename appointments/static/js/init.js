@@ -18,14 +18,7 @@
 	    data: {
 	        posts: [],
 	        results: [],
-			newPost: {
-			    name: '',
-			    content: '',
-				BookStatus: '普通',
-				status:'審查中' 
-			},
 			image:"",
-			love_points: 0
 	    },
 	    methods: {
 			addPost(){
@@ -67,7 +60,7 @@
 				  if (result.value) {
 				    const answers = JSON.stringify(result.value)
 					Swal.fire(
-					  '完成借閱',
+					  '登入成功',
 					  ' ',
 					  'success'
 					)

@@ -21,17 +21,21 @@ def appointment_create(request):
         date_str = request.POST.get('date')
         description = request.POST.get('description')
         
-        # 轉換日期格式
-        date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+        # 轉換日期格式，datetime-local 的格式為 '%Y-%m-%dT%H:%M'
+        date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
         
         # 自動生成 appointment_id
         appointment_id = get_random_string(length=8, allowed_chars='0123456789')
         
+        # 確認 patient 和 doctor 是否存在
+        patient = get_object_or_404(Patient, patient_id=patient_id)
+        doctor = get_object_or_404(Doctor, doctor_id=doctor_id)
+        
         # 創建掛號記錄
         appointment = Appointment(
             appointment_id=appointment_id,
-            patient_id=patient_id,
-            doctor_id=doctor_id,
+            patient=patient,    # 傳遞 patient 物件
+            doctor=doctor,      # 傳遞 doctor 物件
             date=date,
             description=description
         )

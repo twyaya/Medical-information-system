@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from . import views  # 引入剛剛在根目錄 views.py 中的 redirect 函數
 
 urlpatterns = [
+    path('', views.redirect_to_appointments, name='home'),  # 將首頁導向到 appointments
+    path('appointments/', include('appointments.urls')),  # 包含 appointments 應用的 URL
     path('admin/', admin.site.urls),
-    path('appointments/', include('appointments.urls')),  # 加入 appointments 應用的路由
 ]
