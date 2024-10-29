@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
     <title>Appointment Details</title>
+
+       <!-- CSS  -->
+       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       {% load static %}
+       <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+       <link rel="stylesheet" type="text/css" href="{% static 'css/hover.css' %}"/>
+       <link href="https://gnehs.github.io/ChatUI/css/ChatUI.css" rel="stylesheet">
+       <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert2@9.17.0/dist/sweetalert2.min.css"/>
 </head>
 <body>
-    <h1>Appointment Details</h1>
-    <p><strong>Appointment ID:</strong> {{ appointment.appointment_id }}</p>
-    <p><strong>Patient:</strong> {{ appointment.patient.name }} ({{ appointment.patient.patient_id }})</p>
-    <p><strong>Doctor:</strong> {{ appointment.doctor.name }} ({{ appointment.doctor.doctor_id }})</p>
-    <p><strong>Date:</strong> {{ appointment.date }}</p>
-    <p><strong>Description:</strong> {{ appointment.description }}</p>
-    <a href="{% url 'appointment_list' %}">Back to List</a>
+    <div class="container">
+        <h1>Appointment Details</h1>
+        <p><strong>Appointment ID:</strong> {{ appointment.appointment_id }}</p>
+        <p><strong>Patient:</strong> {{ appointment.patient.name }} ({{ appointment.patient.patient_id }})</p>
+        <p><strong>Doctor:</strong> {{ appointment.doctor.name }} ({{ appointment.doctor.doctor_id }})</p>
+        <p><strong>Date:</strong> {{ appointment.date }}</p>
+        <p><strong>Description:</strong> {{ appointment.description }}</p>
+        <a href="{% url 'appointment_list' %}">Back to List</a>
+    </div>
 </body>
 </html>
