@@ -2,9 +2,77 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Patient, Doctor, Appointment
-from django.utils.crypto import get_random_string
-from datetime import datetime
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib import messages
 
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        role = request.POST['role']  # "patient" 或 "doctor"
+        name = request.POST['name']
+        dob = request.POST.get('dob', None)
+        phone = request.POST.get('phone', '')
+        gender = request.POST.get('gender', 'M')
+        age = request.POST.get('age', 18)
+
+        # 創建 Django User
+        user = User.objects.create_user(username=username, password=password)
+
+        # 根據選擇的角色建立 Patient 或 Doctor 資料
+        if role == 'patient':
+            Patient.objects.create(
+                patient_id=username,
+                name=name,
+                dob=dob,
+                phone=phone,
+                gender=gender,
+                age=age
+            )
+        elif role == 'doctor':
+            Doctor.objects.create(
+                doctor_id=username,
+                name=name,
+                gender=gender,
+                age=age
+            )
+
+        messages.success(request, 'Registration successful!')
+        return redirect('login')
+
+    return render(request, 'appointments/register.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('appointment_list')
+        else:
+            messages.error(request, 'Invalid username or password')
+    
+    return render(request, 'appointments/login.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            role = form.cleaned_data.get('role')
+            if role == 'patient':
+                Patient.objects.create(user=user, name=user.username)
+            elif role == 'doctor':
+                Doctor.objects.create(user=user, name=user.username)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegistrationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 def index(request):
     context = {
