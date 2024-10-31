@@ -1,9 +1,45 @@
 # appointments/views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Patient, Doctor, Appointment
+from .models import Patient, Doctor, Appointment,User
 from django.utils.crypto import get_random_string
 from datetime import datetime
+
+from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+
+from django.contrib.auth.decorators import login_required
+
+# 自訂的註冊表單
+class CustomUserCreationForm(UserCreationForm):
+    ROLE_CHOICES = [('patient', 'Patient'), ('doctor', 'Doctor')]
+    role = forms.ChoiceField(choices=ROLE_CHOICES)
+    age = forms.IntegerField(required=False)
+    gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female')], required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2', 'role', 'age', 'gender']
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.role = form.cleaned_data['role']
+            user.age = form.cleaned_data['age']
+            user.gender = form.cleaned_data['gender']
+            user.save()
+
+            messages.success(request, 'Registration successful!')
+            login(request, user)  # 自動登入
+            return redirect('appointment_list')  # 登入後重導到掛號列表頁面
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'appointments/register.html', {'form': form})
 
 
 def index(request):
@@ -48,9 +84,11 @@ def appointment_create(request):
     return render(request, 'appointments/create.html', {'patients': patients, 'doctors': doctors})
 
 # 掛號查詢頁面
+@login_required
 def appointment_list(request):
     appointments = Appointment.objects.select_related('patient', 'doctor').all()
     return render(request, 'appointments/list.html', {'appointments': appointments})
+
 
 # 掛號詳細頁面
 def appointment_detail(request, appointment_id):

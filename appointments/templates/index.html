@@ -72,30 +72,81 @@
 		  <div id="" class="container">
 		  
 			<div class="row">
-				{% for i in range_list %}
 				  <div class="col s12 m3">
 					<div class="card">
 					  <div class="card-image">
-						<img src="{% static 'image/' %}{{ forloop.counter }}.png">
+						<img src="{% static 'image/1.png' %}">
 						<span class="card-title"></span>
 					  </div>
 					  <br>
 					  <div class="card-content">
-						<p>功能描述</p>
+						<p>一般用戶由此進</p>
+						<button data-target="modal1" class="btn right">進入</button>
+						<br>
+					</div>
+					</div>
+				  </div>
+				  <div class="col s12 m3">
+					<div class="card">
+					  <div class="card-image">
+						<img src="{% static 'image/2.png' %}">
+						<span class="card-title"></span>
+					  </div>
+					  <br>
+					  <div class="card-content">
+						<p>重大公告</p>
 						<button class="btn right">進入</button>
 						<br>
 					</div>
 					</div>
 				  </div>
-				{% endfor %}
+				  <div class="col s12 m3">
+					<div class="card">
+					  <div class="card-image">
+						<img src="{% static 'image/3.png' %}">
+						<span class="card-title"></span>
+					  </div>
+					  <br>
+					  <div class="card-content">
+						<p>需授權</p>
+						<button class="btn right">進入</button>
+						<br>
+					</div>
+					</div>
+				  </div>
+				  <div class="col s12 m3">
+					<div class="card">
+					  <div class="card-image">
+						<img src="{% static 'image/4.png' %}">
+						<span class="card-title"></span>
+					  </div>
+					  <br>
+					  <div class="card-content">
+						<p>需授權</p>
+						<button class="btn right">進入</button>
+						<br>
+					</div>
+					</div>
+				  </div>
 			</div>
 			
 			
 		  </div>
-		  <ul>
-			<li><a href="{% url 'appointment_create' %}">Create Appointment</a></li>
-			<li><a href="{% url 'appointment_list' %}">View Appointments</a></li>
-	    	</ul>
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>掛號查詢與創建</h4>
+	  <ul>
+		<li><a href="{% url 'appointment_create' %}">線上掛號</a></li>
+		<li><a href="{% url 'appointment_list' %}">掛號查詢</a></li>
+	 </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">關閉</a>
+    </div>
+  </div>
+
 
 	  <div class="container" id="introduction">
 		<div class="section">
