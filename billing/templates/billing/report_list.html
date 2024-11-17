@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>報表列表</h1>
+
+{% if reports %}
+    <table>
+        <thead>
+            <tr>
+                <th>報表名稱</th>
+                <th>生成日期</th>
+                <th>詳細資訊</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+                <tr>
+                    <td>{{ report.name }}</td>
+                    <td>{{ report.created_at }}</td>
+                    <td><a href="{% url 'report_detail' report.id %}">查看</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>目前沒有報表。</p>
+{% endif %}
+
+{% endblock %}

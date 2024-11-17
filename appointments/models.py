@@ -15,6 +15,7 @@ class Doctor(models.Model):
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')])
     age = models.IntegerField(null=False, default=18)
+    salary = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 
 class Appointment(models.Model):

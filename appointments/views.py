@@ -1,16 +1,35 @@
 # appointments/views.py
-
+#基本邏輯
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Patient, Doctor, Appointment,User
 from django.utils.crypto import get_random_string
 from datetime import datetime
 
+# 登入邏輯
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-
 from django.contrib.auth.decorators import login_required
+
+
+# 訊號處理邏輯
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from billing.models import BillingRecord
+
+@receiver(post_save, sender=Appointment)
+def create_billing_record(sender, instance, created, **kwargs):
+    if created:
+        # 假設每次掛號都有固定費用
+        BillingRecord.objects.create(appointment=instance, amount=100.00)
+
+
+
+
+
+
+
 
 # 自訂的註冊表單
 class CustomUserCreationForm(UserCreationForm):
@@ -43,10 +62,7 @@ def register(request):
 
 
 def index(request):
-    context = {
-        'range_list': range(1, 5)  # 將 range(1, 5) 傳遞給模板
-    }
-    return render(request, 'index.html', context)
+    return render(request, 'index.html')
 
 
 # 掛號表單頁面
