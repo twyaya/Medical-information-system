@@ -57,7 +57,7 @@
                     <td>{{ appointment.appointment_id }}</td>
                     <td>{{ appointment.patient.name }}</td>
                     <td>{{ appointment.doctor.name }}</td>
-                    <td>{{ appointment.appointment_date }}</td>
+                    <td>{{ appointment.date }}</td>
                     <td>{{ appointment.description|truncatewords:10 }}</td>
                     <td><a href="{% url 'appointment_detail' appointment.appointment_id %}" class="btn-small waves-effect waves-light">View</a></td>
                 </tr>
