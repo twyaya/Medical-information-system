@@ -43,13 +43,13 @@
 				  <div class="col s12 m3">
 					<div class="card">
 					  <div class="card-image">
-						<img src="{% static 'image/1.png' %}">
+						<img src="{% static 'image/5.png' %}">
 						<span class="card-title"></span>
 					  </div>
 					  <br>
 					  <div class="card-content">
 						<p>一般用戶由此進</p>
-						<button data-target="modal1" class="btn right">進入</button>
+						<a href="{% url 'generate_report' %}" class="btn right">進入</a>
 						<br>
 					</div>
 					</div>
@@ -57,13 +57,13 @@
 				  <div class="col s12 m3">
 					<div class="card">
 					  <div class="card-image">
-						<img src="{% static 'image/4.png' %}">
+						<img src="{% static 'image/6.png' %}">
 						<span class="card-title"></span>
 					  </div>
 					  <br>
 					  <div class="card-content">
 						<p>需授權</p>
-						<button class="btn right">進入</button>
+						<a href="{% url 'billing_interface' %}" class="btn right">進入</a>
 						<br>
 					</div>
 					</div>
