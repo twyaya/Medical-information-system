@@ -103,7 +103,27 @@ def appointment_create(request):
 @login_required
 def appointment_list(request):
     appointments = Appointment.objects.select_related('patient', 'doctor').all()
-    return render(request, 'appointments/list.html', {'appointments': appointments})
+
+
+        # 獲取篩選條件
+    patient_name = request.GET.get('patient_name', '')  # 病患姓名
+    doctor_name = request.GET.get('doctor_name', '')    # 醫生姓名
+
+    # 查詢 Appointment 資料
+    appointments = Appointment.objects.all()
+
+    # 篩選條件
+    if patient_name:
+        appointments = appointments.filter(patient__name__icontains=patient_name)
+    if doctor_name:
+        appointments = appointments.filter(doctor__name__icontains=doctor_name)
+
+    return render(request, 'appointments/list.html', {
+        'appointments': appointments,
+        'patient_name': patient_name,
+        'doctor_name': doctor_name,
+    })
+
 
 
 # 掛號詳細頁面
