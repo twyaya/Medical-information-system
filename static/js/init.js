@@ -10,6 +10,7 @@
 		 $('.materialboxed').materialbox();
 		 $('.carousel').carousel();
 		 $(".dropdown-button").dropdown();
+		 $('select').material_select();
 	 });
 
 	const SECTIONS_TW = "食品, 運動, 科技"
