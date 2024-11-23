@@ -122,7 +122,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
-STATIC_URL = 'static/'  # 靜態文件的 URL 前綴
+STATIC_URL = '/static/'  # 靜態文件的 URL 前綴
 
 # 設置全局靜態文件目錄
 STATICFILES_DIRS = [
