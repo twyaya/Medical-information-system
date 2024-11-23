@@ -1,4 +1,4 @@
-# Medical-information-system
+# Medical-Information-System
 由大學專題衍生的醫療資訊系統 多種功能
 1. 基本註冊/登入
 2. 掛號預約
