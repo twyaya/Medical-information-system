@@ -1,55 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="center-align">Appointment List</h1>
+{% load static %}
 
-        <!-- 查詢表單 -->
-        <div class="row">
-            <form method="get" action="{% url 'appointment_list' %}" class="col s12">
-                <div class="input-field col s6">
-                    <input type="text" id="patient_name" name="patient_name" value="{{ patient_name }}">
-                    <label for="patient_name">Patient Name</label>
-                </div>
-                <div class="input-field col s6">
-                    <input type="text" id="doctor_name" name="doctor_name" value="{{ doctor_name }}">
-                    <label for="doctor_name">Doctor Name</label>
-                </div>
-                <div class="col s12 center-align">
-                    <button type="submit" class="btn waves-effect waves-light">Search</button>
-                </div>
-            </form>
-        </div>
+<div id="app">
+    <h1 class="center-align">Appointment List</h1>
 
-        <hr>
-
-        <!-- 篩選結果 -->
-        <table class="bordered striped responsive-table">
-            <thead>
-                <tr>
-                    <th>Appointment ID</th>
-                    <th>Patient Name</th>
-                    <th>Doctor Name</th>
-                    <th>Appointment Date</th>
-                    <th>Description</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for appointment in appointments %}
-                <tr>
-                    <td>{{ appointment.appointment_id }}</td>
-                    <td>{{ appointment.patient.name }}</td>
-                    <td>{{ appointment.doctor.name }}</td>
-                    <td>{{ appointment.date }}</td>
-                    <td>{{ appointment.description|truncatewords:10 }}</td>
-                    <td><a href="{% url 'appointment_detail' appointment.appointment_id %}" class="btn-small waves-effect waves-light">View</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <!-- 如果沒有篩選結果 -->
-        {% if not appointments %}
-        <p class="center-align">No appointments found.</p>
-        {% endif %}
+    <!-- 查詢表單 -->
+    <div class="row">
+        <form @submit.prevent="fetchAppointments" class="col s12">
+            <div class="input-field col s6">
+                <input type="text" id="patient_name" v-model="filters.patient_name">
+                <label for="patient_name">Patient Name</label>
+            </div>
+            <div class="input-field col s6">
+                <input type="text" id="doctor_name" v-model="filters.doctor_name">
+                <label for="doctor_name">Doctor Name</label>
+            </div>
+            <div class="col s12 center-align">
+                <button type="submit" class="btn waves-effect waves-light">Search</button>
+            </div>
+        </form>
     </div>
+
+    <hr>
+    {% verbatim %}
+
+    <!-- 篩選結果 -->
+    <table v-if="appointments.length > 0" class="bordered striped responsive-table">
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Appointment Date</th>
+                <th>Description</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="appointment in appointments" :key="appointment.appointment_id">
+                <td>{{ appointment.appointment_id }}</td>
+                <td>{{ appointment.patient__name  }}</td>
+                <td>{{ appointment.doctor__name  }}</td>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.description }}</td>
+                <td>
+                    <a :href="`/appointments/appointments/${appointment.appointment_id}/`" 
+                       class="btn-small waves-effect waves-light">View</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% endverbatim %}
+
+    <!-- 如果沒有篩選結果 -->
+    <p v-else class="center-align">No appointments found.</p>
+</div>
+
 {% endblock %}

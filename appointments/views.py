@@ -99,6 +99,14 @@ def appointment_create(request):
     doctors = Doctor.objects.all()
     return render(request, 'appointments/create.html', {'patients': patients, 'doctors': doctors})
 
+
+
+# 掛號詳細頁面
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(Appointment, appointment_id=appointment_id)
+    return render(request, 'appointments/detail.html', {'appointment': appointment})
+
+
 # 掛號查詢頁面
 @login_required
 def appointment_list(request):
@@ -124,9 +132,31 @@ def appointment_list(request):
         'doctor_name': doctor_name,
     })
 
+from django.http import JsonResponse
+from django.db.models import Q
 
+def appointment_api(request):
+    patient_name = request.GET.get('patient_name', '').strip()  # 去除兩側空白
+    doctor_name = request.GET.get('doctor_name', '').strip()  # 去除兩側空白
 
-# 掛號詳細頁面
-def appointment_detail(request, appointment_id):
-    appointment = get_object_or_404(Appointment, appointment_id=appointment_id)
-    return render(request, 'appointments/detail.html', {'appointment': appointment})
+    # 打印請求參數
+    print(f"Received patient_name: {patient_name}, doctor_name: {doctor_name}")
+
+    # 查詢 Appointment
+    appointments = Appointment.objects.all()
+
+    # 如果有提供篩選條件，則應用過濾器
+    if patient_name:
+        appointments = appointments.filter(patient__name__icontains=patient_name)
+    if doctor_name:
+        appointments = appointments.filter(doctor__name__icontains=doctor_name)
+
+    # 返回 JSON 格式
+    appointment_list = appointments.values(
+        'appointment_id', 
+        'patient__name', 
+        'doctor__name', 
+        'date', 
+        'description'
+    )
+    return JsonResponse(list(appointment_list), safe=False)

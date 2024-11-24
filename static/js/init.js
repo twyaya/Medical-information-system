@@ -15,35 +15,13 @@
 
 	const SECTIONS_TW = "食品, 運動, 科技"
 	new Vue({
-	    el: '#app',
+	    el: '#app-init',
 	    data: {
 	        posts: [],
 	        results: [],
 			image:"",
 	    },
 	    methods: {
-			addPost(){
-				const post = {
-				    name: this.newPost.name,
-				    content: this.newPost.content,
-					BookStatus: this.newPost.BookStatus,
-					status: this.newPost.status
-				}
-				
-				this.posts.push(post);
-				this.newPost.content = ''
-				this.newPost.name = ''
-				this.newPost.BookStatus = ''
-			},fileSelected(event){
-			  const file = event.target.files.item(0); //取得File物件
-			  const reader = new FileReader(); //建立FileReader 監聽 Load 事件
-			  reader.addEventListener('load',this.imageLoader);
-			  reader.readAsDataURL(file);
-			  this.newPost.image = file
-			},
-			imageLoader(event){
-			  this.image=event.target.result;
-			},
 			borrow(){
 				Swal.mixin({
 				  input: 'text',
