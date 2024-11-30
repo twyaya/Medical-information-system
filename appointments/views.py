@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth import logout
 
 # 訊號處理邏輯
 from django.db.models.signals import post_save
@@ -25,10 +25,8 @@ def create_billing_record(sender, instance, created, **kwargs):
         BillingRecord.objects.create(appointment=instance, amount=100.00)
 
 
-
-
-
-
+def index(request):
+    return render(request, 'index.html')
 
 
 # 自訂的註冊表單
@@ -60,12 +58,16 @@ def register(request):
     
     return render(request, 'appointments/register.html', {'form': form})
 
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'You have successfully logged out.')
+    return redirect('login')  # 重導到登入頁面
 
-def index(request):
-    return render(request, 'index.html')
+
 
 
 # 掛號表單頁面
+@login_required
 def appointment_create(request):
     if request.method == 'POST':
         patient_id = request.POST.get('patient_id')

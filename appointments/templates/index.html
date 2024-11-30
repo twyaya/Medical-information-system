@@ -23,12 +23,19 @@
 			<li class="divider"></li>
 			<li><a href="#introduction">特色</a></li>
 		</ul>
-	  <nav class="white" role="navigation">
+	  <nav class="light-blue darken-2" role="navigation">
 		<div class="nav-wrapper container">
 		  <ul class="right hide-on-med-and-down">
 			<li><a class="dropdown-button" href="#!" data-activates="dropdown1">導航<i class="material-icons right" style="width: 0.625rem;">arrow_drop_down</i></a></li>
 		  </ul>
-
+		  <ul class="right">
+			{% if user.is_authenticated %}
+			<li><p>歡迎 {{ user.username }}</p></li>
+			<li><a href="{% url 'logout' %}">Logout</a></li>
+			{% else %}
+			<li><a href="{% url 'login' %}">Login</a></li>
+			{% endif %}
+		</ul>
 		  <ul id="nav-mobile" class="side-nav">
 			<li><a href="#">導航</a></li>
 			<li><a href="#Focus">進入系統</a></li>
@@ -49,9 +56,6 @@
               
 				<h2 class="center-align"> <span id="title">東海醫院全球資訊網</span></h2>
 
-				<div class="row center">
-				<a href="#" id="download-button" class="btn-large waves-effect waves-light teal lighten-1" @click="borrow()">登入/註冊</a>
-				</div>
                 <br><br>
         
               </div>
