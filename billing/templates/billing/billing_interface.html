@@ -15,8 +15,10 @@
 <table class="bordered responsive-table">
     <thead>
       <tr>
+          <th data-field="appointment_id">Appointment ID</th>
           <th data-field="date_created">產生日期</th>
-          <th data-field="name">姓名</th>
+          <th data-field="patient_name">病患</th>
+          <th data-field="doctor_name">醫師</th>
           <th data-field="price">費用</th>
       </tr>
     </thead>
@@ -24,9 +26,12 @@
     <tbody>
         {% for record in records %}
       <tr>
+        <td>{{ record.appointment.appointment_id }}</td>
         <td>{{ record.date_created }} </td>
         <td>{{ record.appointment.patient.name }} </td>
+        <td>{{ record.appointment.doctor.name }} </td>
         <td>{{ record.amount }}</td>
+
       </tr>
       {% endfor %}
     </tbody>
