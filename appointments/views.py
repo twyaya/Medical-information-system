@@ -137,6 +137,10 @@ def appointment_list(request):
 from django.http import JsonResponse
 from django.db.models import Q
 
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Appointment
+
 def appointment_api(request):
     patient_name = request.GET.get('patient_name', '').strip()  # 去除兩側空白
     doctor_name = request.GET.get('doctor_name', '').strip()  # 去除兩側空白
@@ -147,18 +151,61 @@ def appointment_api(request):
     # 查詢 Appointment
     appointments = Appointment.objects.all()
 
-    # 如果有提供篩選條件，則應用過濾器
+    # 處理 patient_name 搜尋
     if patient_name:
-        appointments = appointments.filter(patient__name__icontains=patient_name)
+        # 如果名稱中有空格，分開姓和名進行查詢
+        patient_name_parts = patient_name.split()
+        if len(patient_name_parts) == 2:  # 假設姓氏和名字之間有空格
+            last_name, first_name = patient_name_parts
+            appointments = appointments.filter(
+                Q(patient__user__last_name__icontains=last_name) &
+                Q(patient__user__first_name__icontains=first_name)
+            )
+        else:
+            appointments = appointments.filter(
+                Q(patient__user__first_name__icontains=patient_name) |
+                Q(patient__user__last_name__icontains=patient_name)
+            )
+
+    # 處理 doctor_name 搜尋
     if doctor_name:
-        appointments = appointments.filter(doctor__name__icontains=doctor_name)
+        # 如果名稱中有空格，分開姓和名進行查詢
+        doctor_name_parts = doctor_name.split()
+        if len(doctor_name_parts) == 2:  # 假設姓氏和名字之間有空格
+            last_name, first_name = doctor_name_parts
+            appointments = appointments.filter(
+                Q(doctor__user__last_name__icontains=last_name) &
+                Q(doctor__user__first_name__icontains=first_name)
+            )
+        else:
+            appointments = appointments.filter(
+                Q(doctor__user__first_name__icontains=doctor_name) |
+                Q(doctor__user__last_name__icontains=doctor_name)
+            )
 
     # 返回 JSON 格式
     appointment_list = appointments.values(
         'appointment_id', 
-        'patient__name', 
-        'doctor__name', 
+        'patient__user__first_name', 
+        'patient__user__last_name', 
+        'doctor__user__first_name', 
+        'doctor__user__last_name', 
         'date', 
         'description'
     )
-    return JsonResponse(list(appointment_list), safe=False)
+
+    # 修改結果中的姓名顯示
+    formatted_appointments = [
+        {
+            'appointment_id': appointment['appointment_id'],
+            'patient_name': f"{appointment['patient__user__last_name']}{appointment['patient__user__first_name']}",
+            'doctor_name': f"{appointment['doctor__user__last_name']}{appointment['doctor__user__first_name']}",
+            'date': appointment['date'],
+            'description': appointment['description'],
+        }
+        for appointment in appointment_list
+    ]
+
+    return JsonResponse(formatted_appointments, safe=False)
+
+

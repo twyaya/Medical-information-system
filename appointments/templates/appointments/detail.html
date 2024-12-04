@@ -4,8 +4,8 @@
     <div class="container">
         <h1>Appointment Details</h1>
         <p><strong>Appointment ID:</strong> {{ appointment.appointment_id }}</p>
-        <p><strong>Patient:</strong> {{ appointment.patient.name }} ({{ appointment.patient.patient_id }})</p>
-        <p><strong>Doctor:</strong> {{ appointment.doctor.name }} ({{ appointment.doctor.doctor_id }})</p>
+        <p><strong>Patient:</strong> {{ appointment.patient.user.last_name }}{{ appointment.patient.user.first_name }} ({{ appointment.patient.patient_id }})</p>
+        <p><strong>Doctor:</strong> {{ appointment.doctor.user.last_name }}{{ appointment.doctor.user.first_name }}  ({{ appointment.doctor.doctor_id }})</p>
         <p><strong>Date:</strong> {{ appointment.date }}</p>
         <p><strong>Description:</strong> {{ appointment.description }}</p>
         <a href="{% url 'appointment_list' %}">Back to List</a>

@@ -7,6 +7,7 @@
 
     <!-- 查詢表單 -->
     <div class="row">
+        <p>搜尋時:姓+空格+名字</p>
         <form @submit.prevent="fetchAppointments" class="col s12">
             <div class="input-field col s6">
                 <input type="text" id="patient_name" v-model="filters.patient_name">
@@ -40,8 +41,8 @@
         <tbody>
             <tr v-for="appointment in appointments" :key="appointment.appointment_id">
                 <td>{{ appointment.appointment_id }}</td>
-                <td>{{ appointment.patient__name  }}</td>
-                <td>{{ appointment.doctor__name  }}</td>
+                <td>{{ appointment.patient_name  }}</td>
+                <td>{{ appointment.doctor_name  }}</td>
                 <td>{{ appointment.date }}</td>
                 <td>{{ appointment.description }}</td>
                 <td>
