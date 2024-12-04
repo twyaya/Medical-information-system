@@ -27,9 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'appointments.User'
+AUTH_USER_MODEL = 'appointments.CustomUser'
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'appointment_list'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Application definition
