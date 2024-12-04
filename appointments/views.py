@@ -1,10 +1,9 @@
 # appointments/views.py
 #基本邏輯
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Patient, Doctor, Appointment, CustomUser
+from .models import Patient, Doctor, Appointment,User
 from django.utils.crypto import get_random_string
 from datetime import datetime
-
 
 # 登入邏輯
 from django.contrib.auth import login
@@ -29,33 +28,17 @@ def create_billing_record(sender, instance, created, **kwargs):
 def index(request):
     return render(request, 'index.html')
 
-class AppointmentForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = ['doctor', 'date', 'description']  # 使用正確的字段
 
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # 傳入當前用戶
-        super().__init__(*args, **kwargs)
-
-        # 過濾醫師名單
-        self.fields['doctor'].queryset = CustomUser.objects.filter(role='doctor')
-
-        # 自動填充病患
-        if user and user.role == 'patient':
-            self.fields['description'].initial = f"Appointment requested by {user.full_name}"
-
+# 自訂的註冊表單
 class CustomUserCreationForm(UserCreationForm):
     ROLE_CHOICES = [('patient', 'Patient'), ('doctor', 'Doctor')]
     role = forms.ChoiceField(choices=ROLE_CHOICES)
-    full_name = forms.CharField(max_length=100, required=True)
     age = forms.IntegerField(required=False)
     gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female')], required=False)
 
     class Meta:
-        model = CustomUser
-        fields = ['username', 'password1', 'password2', 'role', 'full_name', 'age', 'gender']
-
+        model = User
+        fields = ['username', 'password1', 'password2', 'role', 'age', 'gender']
 
 def register(request):
     if request.method == 'POST':
@@ -63,19 +46,17 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.role = form.cleaned_data['role']
-            user.full_name = form.cleaned_data['full_name']
             user.age = form.cleaned_data['age']
             user.gender = form.cleaned_data['gender']
             user.save()
 
             messages.success(request, 'Registration successful!')
             login(request, user)  # 自動登入
-            return redirect('appointment_list')  # 根據角色跳轉頁面
+            return redirect('appointment_list')  # 登入後重導到掛號列表頁面
     else:
         form = CustomUserCreationForm()
     
     return render(request, 'appointments/register.html', {'form': form})
-
 
 def logout_view(request):
     logout(request)
@@ -89,27 +70,43 @@ def logout_view(request):
 @login_required
 def appointment_create(request):
     if request.method == 'POST':
-        form = AppointmentForm(request.POST, user=request.user)
-        if form.is_valid():
-            appointment = form.save(commit=False)
-            # 自動設定病患為當前用戶
-            patient = CustomUser.objects.get(username=request.user.username)
-            appointment.patient = Patient.objects.get(name=patient.full_name)
-            appointment.save()
-            return redirect('appointment_list')
-    else:
-        form = AppointmentForm(user=request.user)
-
-    return render(request, 'appointments/create.html', {'form': form})
+        patient_id = request.POST.get('patient_id')
+        doctor_id = request.POST.get('doctor_id')
+        date_str = request.POST.get('date')
+        description = request.POST.get('description')
+        
+        # 轉換日期格式，datetime-local 的格式為 '%Y-%m-%dT%H:%M'
+        date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+        
+        # 自動生成 appointment_id
+        appointment_id = get_random_string(length=8, allowed_chars='0123456789')
+        
+        # 確認 patient 和 doctor 是否存在
+        patient = get_object_or_404(Patient, patient_id=patient_id)
+        doctor = get_object_or_404(Doctor, doctor_id=doctor_id)
+        
+        # 創建掛號記錄
+        appointment = Appointment(
+            appointment_id=appointment_id,
+            patient=patient,    # 傳遞 patient 物件
+            doctor=doctor,      # 傳遞 doctor 物件
+            date=date,
+            description=description
+        )
+        appointment.save()
+        
+        return redirect('appointment_list')
+    
+    patients = Patient.objects.all()
+    doctors = Doctor.objects.all()
+    return render(request, 'appointments/create.html', {'patients': patients, 'doctors': doctors})
 
 
 
 # 掛號詳細頁面
 def appointment_detail(request, appointment_id):
     appointment = get_object_or_404(Appointment, appointment_id=appointment_id)
-    patient_name = appointment.patient.name
-    return render(request, 'appointments/detail.html', {'appointment': appointment, 'patient_name': patient_name})
-
+    return render(request, 'appointments/detail.html', {'appointment': appointment})
 
 
 # 掛號查詢頁面

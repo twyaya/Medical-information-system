@@ -27,9 +27,11 @@ class Appointment(models.Model):
     description = models.TextField()  # 預約的描述，記錄病人或醫生的相關註解
 
 # 自訂使用者模型，繼承自 AbstractUser，擴展了角色功能
-class CustomUser(AbstractUser):
-    ROLE_CHOICES = [('patient', 'Patient'), ('doctor', 'Doctor')]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='patient')
-    age = models.PositiveIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True)
-    full_name = models.CharField(max_length=100, null=True, blank=True)  # 用戶姓名
+class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('patient', 'Patient'),  # 病人的角色
+        ('doctor', 'Doctor'),    # 醫生的角色
+    ]
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='patient')  # 使用者的角色，預設為 'patient'
+    age = models.PositiveIntegerField(null=True, blank=True)  # 使用者的年齡，選填
+    gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True)  # 使用者的性別，選填，男或女
