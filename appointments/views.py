@@ -65,7 +65,6 @@ def logout_view(request):
 
 
 
-
 # 掛號表單頁面
 @login_required
 def appointment_create(request):

@@ -28,8 +28,8 @@
       <tr>
         <td>{{ record.appointment.appointment_id }}</td>
         <td>{{ record.date_created }} </td>
-        <td>{{ record.appointment.patient.name }} </td>
-        <td>{{ record.appointment.doctor.name }} </td>
+        <td>{{ record.appointment.patient.user.last_name }}{{ record.appointment.patient.user.first_name }}</td>
+        <td>{{ record.appointment.doctor.user.last_name }}{{ record.appointment.doctor.user.first_name }}</td>
         <td>{{ record.amount }}</td>
 
       </tr>
