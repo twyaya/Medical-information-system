@@ -63,6 +63,14 @@ def logout_view(request):
     messages.success(request, 'You have successfully logged out.')
     return redirect('login')  # 重導到登入頁面
 
+# 個人檔案頁面
+@login_required
+def profile(request):
+    user = request.user
+    context = {
+        'user': user,
+    }
+    return render(request, 'appointments/profile.html', context)
 
 
 # 掛號表單頁面

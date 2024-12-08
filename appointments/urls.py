@@ -6,13 +6,16 @@ urlpatterns = [
     # 首頁
     path('', views.index, name='index'),
 
+    # 個人檔案
+    path('profile/', views.profile, name='profile'),
+
     # 註冊頁面
     path('register/', views.register, name='register'),
 
     # 登入頁面
     path('login/', auth_views.LoginView.as_view(template_name='appointments/login.html'), name='login'),
 
-    #登出頁面
+    # 登出頁面
     path('logout/', views.logout_view, name='logout'),
 
     # 創建掛號

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h1>個人資訊</h1>
+    
+    <div class="row">
+        <div class="col s12 m7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-image">
+                        <img src="{% static 'image/avatar/boy.png' %}">
+                        
+                    </div>
+                    
+                    <p class="card-text">
+                        <span class="card-title">{{ user.get_full_name }}</span><br>
+                        <strong>角色：</strong> {{ user.get_role_display }}<br>
+                        <strong>電子郵件：</strong> {{ user.email }}<br>
+                        <strong>年齡：</strong> {{ user.age|default:"未設定" }}<br>
+                        <strong>性別：</strong> {{ user.get_gender_display|default:"未設定" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
