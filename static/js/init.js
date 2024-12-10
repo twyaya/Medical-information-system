@@ -22,30 +22,7 @@
 			image:"",
 	    },
 	    methods: {
-			borrow(){
-				Swal.mixin({
-				  input: 'text',
-				  confirmButtonText: 'Next &rarr;',
-				  showCancelButton: true,
-				  progressSteps: ['1', '2']
-				}).queue([
-				  {
-				    title: '第一步:輸入電子郵件信箱',
-				  },
-				  {
-				    title: '第二步:輸入密碼',
-				  }
-				]).then((result) => {
-				  if (result.value) {
-				    const answers = JSON.stringify(result.value)
-					Swal.fire(
-					  '登入成功',
-					  ' ',
-					  'success'
-					)
-				  }
-				})
-			}
+
 		  }
 	    });
 

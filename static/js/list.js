@@ -30,6 +30,12 @@ new Vue({
                 console.error('Error fetching appointments:', error);
                 alert('Failed to fetch appointments. Please try again.');
             }
+        },
+        updateValue(appointmentId, newValue) {
+            const checkbox = document.getElementById(`update_${appointmentId}`);
+            if (checkbox) {
+                checkbox.value = `${appointmentId}:${newValue}`;
+            }
         }
     },
     created() {

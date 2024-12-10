@@ -20,7 +20,7 @@
 
 	  <nav class="light-blue darken-2" role="navigation">
 		<div class="nav-wrapper container">
-
+                <a href="{% url 'home' %}" class="brand-logo">首頁</a>
                 <ul class="right">
                     {% if user.is_authenticated %}
                     <li><p>歡迎 {{ user.username }}</p></li>

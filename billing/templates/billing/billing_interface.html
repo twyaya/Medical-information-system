@@ -4,36 +4,64 @@
 <h1>費用結算</h1>
 <form method="post">
     {% csrf_token %}
-    <label for="appointment_id">掛號編號:</label>
-    <input type="text" id="appointment_id" name="appointment_id" required><br>
-    <label for="amount">金額:</label>
-    <input type="number" id="amount" name="amount" step="10" required><br>
+    <h3>現有記錄</h3>
+    <table class="bordered responsive-table">
+        <thead>
+            <tr>
+                <th data-field="appointment_id">Appointment ID</th>
+                <th data-field="date_created">產生日期</th>
+                <th data-field="patient_name">病患</th>
+                <th data-field="doctor_name">醫師</th>
+                <th data-field="price">費用</th>
+                <th data-field="check">確認欄位</th>
+                <th data-field="update">更新金額</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.appointment.appointment_id }}</td>
+                <td>{{ record.date_created }}</td>
+                <td>{{ record.appointment.patient.user.last_name }}{{ record.appointment.patient.user.first_name }}</td>
+                <td>{{ record.appointment.doctor.user.last_name }}{{ record.appointment.doctor.user.first_name }}</td>
+                <td>{{ record.amount }}</td>
+                <td>
+                    <input type="checkbox" id="update_{{ record.appointment.appointment_id }}" name="updates" value="{{ record.appointment.appointment_id }}">
+                    <label for="update_{{ record.appointment.appointment_id }}">勾選</label>
+                </td>
+                <td>
+                    <input 
+                        type="number" 
+                        step="10" 
+                        placeholder="新金額" 
+                        @change="updateValue('{{ record.appointment.appointment_id }}', $event.target.value)">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <button type="submit">提交</button>
 </form>
 
-<h3>現有記錄</h3>
-<table class="bordered responsive-table">
-    <thead>
-      <tr>
-          <th data-field="appointment_id">Appointment ID</th>
-          <th data-field="date_created">產生日期</th>
-          <th data-field="patient_name">病患</th>
-          <th data-field="doctor_name">醫師</th>
-          <th data-field="price">費用</th>
-      </tr>
-    </thead>
+<script>
+new Vue({
+    el: '#app',
+    data() {
+        return {
+            updates: {}, // 儲存每筆更新的金額
+        };
+    },
+    methods: {
+        updateValue(appointmentId, newValue) {
+            if (newValue) {
+                this.updates[appointmentId] = newValue;
+            } else {
+                delete this.updates[appointmentId]; // 移除未填寫的金額
+            }
+        },
+    },
+});
+</script>
 
-    <tbody>
-        {% for record in records %}
-      <tr>
-        <td>{{ record.appointment.appointment_id }}</td>
-        <td>{{ record.date_created }} </td>
-        <td>{{ record.appointment.patient.user.last_name }}{{ record.appointment.patient.user.first_name }}</td>
-        <td>{{ record.appointment.doctor.user.last_name }}{{ record.appointment.doctor.user.first_name }}</td>
-        <td>{{ record.amount }}</td>
-
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 {% endblock %}

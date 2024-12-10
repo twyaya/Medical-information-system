@@ -13,10 +13,15 @@ def index(request):
 # 費用結算介面
 def billing_interface(request):
     if request.method == 'POST':
-        appointment_id = request.POST['appointment_id']
-        amount = request.POST['amount']
-        appointment = Appointment.objects.get(appointment_id=appointment_id)
-        BillingRecord.objects.create(appointment=appointment, amount=amount)
+        # 獲取更新的費用資料
+        updates = request.POST.getlist('updates')
+        for update in updates:
+            appointment_id, new_amount = update.split(':')
+            appointment = Appointment.objects.get(appointment_id=appointment_id)
+            billing_record = BillingRecord.objects.get(appointment=appointment)
+            billing_record.amount = float(new_amount)
+            billing_record.save()
+
         return redirect('billing_interface')
 
     records = BillingRecord.objects.all()
