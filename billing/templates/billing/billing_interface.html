@@ -41,8 +41,27 @@
             {% endfor %}
         </tbody>
     </table>
-    <button class="btn" type="submit">提交</button>
+    <button type="submit">提交</button>
 </form>
 
+<script>
+new Vue({
+    el: '#app',
+    data() {
+        return {
+            updates: {}, // 儲存每筆更新的金額
+        };
+    },
+    methods: {
+        updateValue(appointmentId, newValue) {
+            if (newValue) {
+                this.updates[appointmentId] = newValue;
+            } else {
+                delete this.updates[appointmentId]; // 移除未填寫的金額
+            }
+        },
+    },
+});
+</script>
 
 {% endblock %}

@@ -13,6 +13,19 @@
 		 $('select').material_select();
 	 });
 
-	
+	const SECTIONS_TW = "食品, 運動, 科技"
+	new Vue({
+	    el: '#app-init',
+	    data: {
+	        posts: [],
+	        results: [],
+			image:"",
+	    },
+	    methods: {
+
+		  }
+	    });
+
+
   }); // end of document ready
 })(jQuery); // end of jQuery name space
