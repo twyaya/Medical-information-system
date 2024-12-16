@@ -29,16 +29,20 @@ def index(request):
     return render(request, 'index.html')
 
 
+
 # 自訂的註冊表單
 class CustomUserCreationForm(UserCreationForm):
     ROLE_CHOICES = [('patient', 'Patient'), ('doctor', 'Doctor')]
     role = forms.ChoiceField(choices=ROLE_CHOICES)
-    age = forms.IntegerField(required=False)
+    age = forms.IntegerField(required=False, min_value=0)
     gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female')], required=False)
+    dob = forms.DateField(required=False, widget=forms.SelectDateWidget(years=range(1900, 2025)))  # 加入出生日期欄位
+    salary = forms.DecimalField(required=False, max_digits=10, decimal_places=2, min_value=0, widget=forms.NumberInput(attrs={'placeholder': 'Salary'}))  # 醫生的薪水欄位
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'role', 'age', 'gender']
+        fields = ['username', 'first_name', 'last_name', 'password1', 'password2', 'role', 'age', 'gender', 'dob', 'salary']
+
 
 def register(request):
     if request.method == 'POST':
@@ -48,7 +52,17 @@ def register(request):
             user.role = form.cleaned_data['role']
             user.age = form.cleaned_data['age']
             user.gender = form.cleaned_data['gender']
-            user.save()
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()  # 儲存 User 物件
+
+            # 根據角色創建對應的 Patient 或 Doctor 物件
+            if user.role == 'patient':
+                patient = Patient(user=user, dob=form.cleaned_data['dob'], patient_id="P" + str(user.id))
+                patient.save()
+            elif user.role == 'doctor':
+                doctor = Doctor(user=user, salary=form.cleaned_data['salary'], doctor_id="D" + str(user.id))
+                doctor.save()
 
             messages.success(request, 'Registration successful!')
             login(request, user)  # 自動登入
@@ -57,6 +71,7 @@ def register(request):
         form = CustomUserCreationForm()
     
     return render(request, 'appointments/register.html', {'form': form})
+
 
 def logout_view(request):
     logout(request)
@@ -143,10 +158,6 @@ def appointment_list(request):
 
 from django.http import JsonResponse
 from django.db.models import Q
-
-from django.http import JsonResponse
-from django.db.models import Q
-from .models import Appointment
 
 def appointment_api(request):
     patient_name = request.GET.get('patient_name', '').strip()  # 去除兩側空白
