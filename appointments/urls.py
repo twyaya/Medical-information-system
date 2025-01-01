@@ -30,6 +30,7 @@ urlpatterns = [
     # API 查詢掛號
     path('api/appointments/', views.appointment_api, name='appointment_api'),
 
- 
+    # 顯示公告
+    path('announcements/', views.announcement_list, name='announcement_list'),
 
 ]

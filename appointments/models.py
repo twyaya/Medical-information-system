@@ -31,3 +31,16 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, db_column="doctor_id")  # 外鍵，指向醫生，當醫生被刪除時，所有與其相關的預約也會被刪除
     date = models.DateTimeField()  # 預約的日期和時間
     description = models.TextField()  # 預約的描述，記錄病人或醫生的相關註解
+
+
+# 公告模型
+from django.utils.timezone import now
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200, verbose_name="公告標題")
+    content = models.TextField(verbose_name="公告內容")
+    date = models.DateTimeField(default=now, verbose_name="公告日期")
+    author = models.CharField(max_length=100, verbose_name="公告發布者")
+
+    def __str__(self):
+        return self.title

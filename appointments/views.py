@@ -1,7 +1,7 @@
 # appointments/views.py
 #基本邏輯
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Patient, Doctor, Appointment,User
+from .models import Patient, Doctor, Appointment, User, Announcement
 from django.utils.crypto import get_random_string
 from datetime import datetime
 
@@ -28,6 +28,10 @@ def create_billing_record(sender, instance, created, **kwargs):
 def index(request):
     return render(request, 'index.html')
 
+
+def announcement_list(request):
+    announcements = Announcement.objects.order_by('-date')
+    return render(request, 'announcements/announcement_list.html', {'announcements': announcements})
 
 
 # 自訂的註冊表單
@@ -88,41 +92,69 @@ def profile(request):
     return render(request, 'appointments/profile.html', context)
 
 
-# 掛號表單頁面
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils.crypto import get_random_string
+from datetime import datetime
+from .models import Appointment, Patient, Doctor
+
 @login_required
 def appointment_create(request):
+    user = request.user
+
+    # 確認登入者角色並取得對應的病患或醫師實例
+    if user.role == 'doctor':
+        doctor_fixed = get_object_or_404(Doctor, user=user)
+        patients = Patient.objects.all()  # 醫師可以選擇病患
+        patient_fixed = None
+    elif user.role == 'patient':
+        patient_fixed = get_object_or_404(Patient, user=user)
+        doctors = Doctor.objects.all()  # 病患可以選擇醫師
+        doctor_fixed = None
+    else:
+        return redirect('home')  # 若角色無效，重導到首頁
+
     if request.method == 'POST':
-        patient_id = request.POST.get('patient_id')
-        doctor_id = request.POST.get('doctor_id')
+        # 獲取表單資料
         date_str = request.POST.get('date')
         description = request.POST.get('description')
-        
-        # 轉換日期格式，datetime-local 的格式為 '%Y-%m-%dT%H:%M'
-        date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-        
+
         # 自動生成 appointment_id
         appointment_id = get_random_string(length=8, allowed_chars='0123456789')
-        
-        # 確認 patient 和 doctor 是否存在
-        patient = get_object_or_404(Patient, patient_id=patient_id)
-        doctor = get_object_or_404(Doctor, doctor_id=doctor_id)
-        
-        # 創建掛號記錄
+
+        # 轉換日期格式，`datetime-local` 的格式為 `%Y-%m-%dT%H:%M`
+        date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+
+        # 根據角色確定病患與醫師
+        if user.role == 'doctor':
+            patient_id = request.POST.get('patient_id')
+            patient = get_object_or_404(Patient, patient_id=patient_id)
+            doctor = doctor_fixed
+        elif user.role == 'patient':
+            doctor_id = request.POST.get('doctor_id')
+            doctor = get_object_or_404(Doctor, doctor_id=doctor_id)
+            patient = patient_fixed
+
+        # 創建掛號
         appointment = Appointment(
             appointment_id=appointment_id,
-            patient=patient,    # 傳遞 patient 物件
-            doctor=doctor,      # 傳遞 doctor 物件
+            patient=patient,
+            doctor=doctor,
             date=date,
             description=description
         )
         appointment.save()
-        
-        return redirect('appointment_list')
-    
-    patients = Patient.objects.all()
-    doctors = Doctor.objects.all()
-    return render(request, 'appointments/create.html', {'patients': patients, 'doctors': doctors})
 
+        return redirect('appointment_list')  # 掛號完成後重導列表頁面
+
+    # 傳遞對應資料到模板
+    context = {
+        'patients': patients if user.role == 'doctor' else [],
+        'doctors': doctors if user.role == 'patient' else [],
+        'doctor_fixed': doctor_fixed,
+        'patient_fixed': patient_fixed,
+    }
+    return render(request, 'appointments/create.html', context)
 
 
 # 掛號詳細頁面

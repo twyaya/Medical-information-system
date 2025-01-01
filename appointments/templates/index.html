@@ -30,7 +30,7 @@
 		  </ul>
 		  <ul class="right">
 			{% if user.is_authenticated %}
-			<li><p>歡迎 {{ user.username }}</p></li>
+			<li><p>歡迎 {{ user.first_name }} ({{ user.username }})</p></li>
 			<li><a href="{% url 'logout' %}">Logout</a></li>
 			{% else %}
 			<li><a href="{% url 'login' %}">Login</a></li>
@@ -99,7 +99,7 @@
 					  <br>
 					  <div class="card-content">
 						<p>重大公告</p>
-						<a href="" class="btn right">進入</a>
+						<a href="{% url 'announcement_list' %}" class="btn right">進入</a>
 						<br>
 					</div>
 					</div>

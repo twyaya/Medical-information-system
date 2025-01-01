@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>公告列表</h1>
+    <ul>
+        {% for announcement in announcements %}
+        <li>
+            <h2>{{ announcement.title }}</h2>
+            <p>{{ announcement.content }}</p>
+            <small>發布日期：{{ announcement.date }} | 發布者：{{ announcement.author }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
